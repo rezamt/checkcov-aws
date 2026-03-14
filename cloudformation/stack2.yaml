@@ -5,8 +5,8 @@ Resources:
 
   # ── Role 4: SQS Consumer ──────────────────────────────────────────────────
   SQSConsumerRole:
-    Type: AWS::IAM::Role
-    Properties:
+  Type: AWS::IAM::Role
+  Properties:
       RoleName: stack2-sqs-consumer-role
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
