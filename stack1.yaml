@@ -1,0 +1,112 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Stack 1 - IAM Roles and Policies (Roles 1-3)
+
+Resources:
+
+  # ── Role 1: Lambda Execution ──────────────────────────────────────────────
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: stack1-lambda-execution-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+
+  LambdaExecutionPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: stack1-lambda-execution-policy
+      Roles:
+        - !Ref LambdaExecutionRole
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+
+  # ── Role 2: S3 Read-Only ──────────────────────────────────────────────────
+  S3ReadOnlyRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: stack1-s3-readonly-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+
+  S3ReadOnlyPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: stack1-s3-readonly-policy
+      Roles:
+        - !Ref S3ReadOnlyRole
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:GetObject
+              - s3:ListBucket
+              - s3:GetBucketLocation
+            Resource:
+              - arn:aws:s3:::*
+              - arn:aws:s3:::*/*
+
+  # ── Role 3: DynamoDB Access ───────────────────────────────────────────────
+  DynamoDBAccessRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: stack1-dynamodb-access-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+
+  DynamoDBAccessPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: stack1-dynamodb-access-policy
+      Roles:
+        - !Ref DynamoDBAccessRole
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+              - dynamodb:Query
+              - dynamodb:Scan
+            Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/*"
+
+Outputs:
+  LambdaExecutionRoleArn:
+    Value: !GetAtt LambdaExecutionRole.Arn
+    Export:
+      Name: stack1-LambdaExecutionRoleArn
+
+  S3ReadOnlyRoleArn:
+    Value: !GetAtt S3ReadOnlyRole.Arn
+    Export:
+      Name: stack1-S3ReadOnlyRoleArn
+
+  DynamoDBAccessRoleArn:
+    Value: !GetAtt DynamoDBAccessRole.Arn
+    Export:
+      Name: stack1-DynamoDBAccessRoleArn
