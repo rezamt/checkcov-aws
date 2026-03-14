@@ -1,0 +1,14 @@
+metadata:
+  name: "Do not allow odb:* service prefix in IAM policies"
+  id: "CHI_POLICY_SERVICE_001"
+  category: "IAM"
+  guideline: "The 'odb' service prefix must not be used in any IAM policy action."
+definition:
+  cond_type: "attribute"
+  resource_types:
+    - "AWS::IAM::Policy"
+    - "AWS::IAM::ManagedPolicy"
+    - "AWS::IAM::Role"
+  attribute: "PolicyDocument.Statement[*].Action"
+  operator: "not_contains"
+  value: "odb:"

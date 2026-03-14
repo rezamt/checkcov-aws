@@ -1,0 +1,19 @@
+metadata:
+  name: "Do not attach overly permissive AWS managed policies to IAM roles"
+  id: "CHI_POLICY_IAM_001"
+  category: "IAM"
+  guideline: "Roles must not have AdministratorAccess or AmazonS3FullAccess AWS managed policies attached."
+definition:
+  and:
+    - cond_type: "attribute"
+      resource_types:
+        - "AWS::IAM::Role"
+      attribute: "ManagedPolicyArns"
+      operator: "not_contains"
+      value: "arn:aws:iam::aws:policy/AdministratorAccess"
+    - cond_type: "attribute"
+      resource_types:
+        - "AWS::IAM::Role"
+      attribute: "ManagedPolicyArns"
+      operator: "not_contains"
+      value: "arn:aws:iam::aws:policy/AmazonS3FullAccess"
