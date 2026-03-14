@@ -5,7 +5,7 @@ Resources:
 
   # ── Role 1: Lambda Execution ──────────────────────────────────────────────
   LambdaExecutionRole:
-    Type: AWS::IAM::Role
+    Type: AWS::IAM::RRole
     Properties:
       RoleName: stack1-lambda-execution-role
       AssumeRolePolicyDocument:
