@@ -1,0 +1,24 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Stack 3 - IAM Role with full S3 admin managed policy (risky!)
+
+Resources:
+
+  S3FullAdminRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: stack3-s3-full-admin-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+
+Outputs:
+  S3FullAdminRoleArn:
+    Value: !GetAtt S3FullAdminRole.Arn
+    Export:
+      Name: stack3-S3FullAdminRoleArn
