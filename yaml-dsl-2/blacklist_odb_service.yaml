@@ -9,6 +9,6 @@ definition:
     - "AWS::IAM::Policy"
     - "AWS::IAM::ManagedPolicy"
     - "AWS::IAM::Role"
-  attribute: "PolicyDocument.Statement[*].Action"
-  operator: "not_contains"
-  value: "odb:"
+  attribute: "PolicyDocument.Statement[*].Action[*]"
+  operator: "jsonpath_not_regex_match"   # ← jsonpath_ prefix activates wildcard traversal
+  value: "^odb:.*create.*"    # ← .*  before create catches odb:*create*, odb:bulkCreate etc.

@@ -2,72 +2,30 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: Stack 2 - IAM Roles and Policies (Roles 4-5)
 
 Resources:
-
-  # ── Role 4: SQS Consumer ──────────────────────────────────────────────────
-  SQSConsumerRole:
-  Type: AWS::IAM::Role
-  Properties:
-      RoleName: stack2-sqs-consumer-role
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-            Action: sts:AssumeRole
-
-  SQSConsumerPolicy:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName: stack2-sqs-consumer-policy
-      Roles:
-        - !Ref SQSConsumerRole
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Action:
-              - sqs:ReceiveMessage
-              - sqs:DeleteMessage
-              - sqs:GetQueueAttributes
-              - sqs:GetQueueUrl
-            Resource: !Sub "arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:*"
-
-  # ── Role 5: Secrets Manager Reader ───────────────────────────────────────
-  SecretsReaderRole:
+  ODBDeveloperRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: stack2-secrets-reader-role
+      RoleName: odb-viewonly-role
+      #RoleName: odb-admin-role
+      #RoleName: odb-admin-role
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Principal:
-              Service: ecs-tasks.amazonaws.com
+              Service: odb.amazonaws.com
             Action: sts:AssumeRole
 
-  SecretsReaderPolicy:
+  ODBReaderPolicy:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: stack2-secrets-reader-policy
+      PolicyName: stack2-odb-reader-policy
       Roles:
-        - !Ref SecretsReaderRole
+        - !Ref ODBDeveloperRole
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Action:
-              - secretsmanager:GetSecretValue
-              - secretsmanager:DescribeSecret
-            Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:*"
-
-Outputs:
-  SQSConsumerRoleArn:
-    Value: !GetAtt SQSConsumerRole.Arn
-    Export:
-      Name: stack2-SQSConsumerRoleArn
-
-  SecretsReaderRoleArn:
-    Value: !GetAtt SecretsReaderRole.Arn
-    Export:
-      Name: stack2-SecretsReaderRoleArn
+              - odb:*create*
+            Resource: "*"

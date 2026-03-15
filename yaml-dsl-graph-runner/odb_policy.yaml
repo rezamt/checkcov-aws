@@ -1,0 +1,21 @@
+metadata:
+  name: "Do not allow odb:create* actions unless attached to odb-developer-role"
+  id: "CHI_POLICY_SERVICE_001"
+  category: "IAM"
+  guideline: "odb:create* actions are only permitted when attached to odb-developer-role."
+definition:
+  and:
+    - cond_type: "attribute"
+      resource_types:
+        - "AWS::IAM::Policy"
+      attribute: "Properties.PolicyDocument.Statement[*].Action[*]"
+      operator: "jsonpath_not_regex_match"
+      value: "^odb:.*create.*"
+    - cond_type: "connection"
+      resource_types:
+        - "AWS::IAM::Policy"
+      connected_resource_types:
+        - "AWS::IAM::Role"
+      operator: "exists"
+      attribute: "Properties.RoleName"
+      value: "odb-developer-role"
